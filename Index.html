@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Papiromesa - Estudio de Desarrollo | Mapas Mentales</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+
+    <!-- Google Fonts (Playfair Display + Montserrat) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@600&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <!-- Mermaid.js -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js">
+    </script>
+
+    <style>
+        /* ==========================================================
+           ESTILOS GLOBALES Y DE LA PANTALLA DE CRÉDITO (PAPIROMESA)
+           ========================================================== */
+        :root {
+            --dark-wood: #1a0f0a;
+            --mahogany: #2c1810;
+            --amber: #d4a037;
+            --gold: #f0c040;
+            --copper: #c47a3a;
+            --cream: #f5e6c8;
+            --smoke: #d9c8a9;
+            --neon-amber: #ffb347;
+            --neon-blue: #4fc3f7;
+            --neon-red: #e74c3c;
+            --leather: #3a2215;
+            --marble: #1e120e;
+            --border-glow: rgba(240, 192, 64, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: var(--dark-wood);
+            background-image:
+                radial-gradient(ellipse at 20% 10%, #3a1f0f 0%, #1a0f0a 60%),
+                radial-gradient(ellipse at 80% 90%, #2c1810 0%, #1a0f0a 70%),
+                repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(240, 192, 64, 0.02) 40px, rgba(240, 192, 64, 0.02) 41px);
+            min-height: 100vh;
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Barra de neón superior */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg,
+                    transparent,
+                    var(--neon-amber) 15%,
+                    var(--neon-blue) 35%,
+                    var(--neon-red) 55%,
+                    var(--neon-amber) 75%,
+                    transparent);
+            box-shadow: 0 0 20px rgba(240, 192, 64, 0.6), 0 0 40px rgba(79, 195, 247, 0.3);
+            z-index: 100;
+            animation: neonPulse 2.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes neonPulse {
+            0% {
+                opacity: 0.7;
+                filter: brightness(0.9);
+            }
+            100% {
+                opacity: 1;
+                filter: brightness(1.3);
+            }
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                radial-gradient(circle at 25% 35%, rgba(79, 195, 247, 0.03) 2px, transparent 3px),
+                radial-gradient(circle at 65% 70%, rgba(79, 195, 247, 0.02) 1px, transparent 2px),
+                radial-gradient(circle at 85% 20%, rgba(240, 192, 64, 0.04) 3px, transparent 4px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ========== OVERLAY DE CRÉDITO (PAPIROMESA) ========== */
+        #credit-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #ffffff;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: opacity 0.9s ease, visibility 0.9s ease, transform 0.9s ease;
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+
+        #credit-overlay.hidden-overlay {
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(1.08);
+            pointer-events: none;
+        }
+
+        /* Tipografías de Papiromesa */
+        .fuente-titulo {
+            font-family: 'Playfair Display', serif;
+            color: #1a1a1a;
+            letter-spacing: 0.05em;
+            animation: tituloEntrada 1.2s ease-out forwards;
+            opacity: 0;
+            transform: scale(0.85);
+        }
+
+        .fuente-subtitulo {
+            font-family: 'Montserrat', sans-serif;
+            color: #333333;
+            animation: subtituloEntrada 1.2s ease-out 0.4s forwards;
+            opacity: 0;
+            transform: translateY(15px);
+        }
+
+        @keyframes tituloEntrada {
+            0% {
+                opacity: 0;
+                transform: scale(0.75);
+                filter: blur(6px);
+            }
+            60% {
+                opacity: 1;
+                transform: scale(1.04);
+                filter: blur(0);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes subtituloEntrada {
+            0% {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Efectos origami */
+        .sombra-origami {
+            filter: drop-shadow(3px 5px 4px rgba(0, 0, 0, 0.15));
+        }
+
+        .brillo-neon-rojo {
+            filter: drop-shadow(0 0 4px #ff3366) drop-shadow(0 0 10px #ff3366) drop-shadow(0 0 15px rgba(255, 51, 102, 0.6));
+        }
+
+        @keyframes flotar {
+            0% {
+                transform: translateY(0px) rotate(var(--rotacion-inicial));
+            }
+            50% {
+                transform: translateY(-10px) rotate(calc(var(--rotacion-inicial) + 5deg));
+            }
+            100% {
+                transform: translateY(0px) rotate(var(--rotacion-inicial));
+            }
+        }
+
+        .animacion-flotar {
+            animation: flotar 6s ease-in-out infinite;
+        }
+
+        /* Animación de aparición escalonada para estrellas y origami */
+        .elemento-credito {
+            opacity: 0;
+            animation: aparecerElemento 0.8s ease-out forwards;
+        }
+
+        @keyframes aparecerElemento {
+            0% {
+                opacity: 0;
+                transform: scale(0.5) rotate(0deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(var(--rotacion-inicial, 0deg));
+            }
+        }
+
+        /* ========== CONTENIDO PRINCIPAL (MAPAS MENTALES) ========== */
+        #main-wrapper {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 1600px;
+            opacity: 1;
+            transition: opacity 0.8s ease 0.2s;
+        }
+
+        #main-wrapper.content-visible {
+            opacity: 1;
+        }
+
+        /* Encabezado estilo menú de bar */
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding: 1.5rem 2.5rem;
+            background: rgba(28, 18, 12, 0.92);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            border: 2px solid var(--gold);
+            border-left: 5px solid var(--copper);
+            border-right: 5px solid var(--copper);
+            box-shadow:
+                0 8px 40px rgba(0, 0, 0, 0.8),
+                inset 0 0 30px rgba(240, 192, 64, 0.05),
+                0 0 15px var(--border-glow);
+            max-width: 950px;
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+
+        .header::after {
+            content: '🍸';
+            position: absolute;
+            top: -1.5rem;
+            right: 2rem;
+            font-size: 2.5rem;
+            animation: shakeCocktail 2s ease-in-out infinite;
+        }
+
+        .header::before {
+            content: '🥃';
+            position: absolute;
+            top: -1.5rem;
+            left: 2rem;
+            font-size: 2.2rem;
+            animation: shakeCocktail 2.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes shakeCocktail {
+            0%,
+            100% {
+                transform: rotate(0deg) translateY(0);
+            }
+            25% {
+                transform: rotate(-5deg) translateY(-3px);
+            }
+            50% {
+                transform: rotate(5deg) translateY(-1px);
+            }
+            75% {
+                transform: rotate(-3deg) translateY(-4px);
+            }
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            letter-spacing: 6px;
+            color: var(--cream);
+            text-shadow:
+                0 2px 15px rgba(240, 192, 64, 0.5),
+                0 0 30px rgba(240, 192, 64, 0.2);
+            text-transform: uppercase;
+            font-family: 'Georgia', 'Times New Roman', serif;
+        }
+
+        .header h1 i {
+            color: var(--neon-amber);
+            margin: 0 0.5rem;
+            font-size: 2.2rem;
+            animation: glowIcon 1.8s ease-in-out infinite alternate;
+        }
+
+        @keyframes glowIcon {
+            0% {
+                text-shadow: 0 0 5px rgba(255, 179, 71, 0.6);
+            }
+            100% {
+                text-shadow: 0 0 20px rgba(255, 179, 71, 1), 0 0 40px rgba(255, 179, 71, 0.5);
+            }
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            color: var(--smoke);
+            margin-top: 0.2rem;
+            letter-spacing: 3px;
+            border-top: 1px dashed var(--gold);
+            padding-top: 0.6rem;
+            display: inline-block;
+            text-transform: uppercase;
+        }
+
+        .header .subtitle i {
+            margin: 0 0.4rem;
+            color: var(--neon-amber);
+        }
+
+        .header .docente {
+            margin-top: 0.6rem;
+            font-size: 0.95rem;
+            color: #c9a87c;
+            letter-spacing: 1px;
+        }
+
+        .header .docente i {
+            color: var(--neon-amber);
+        }
+
+        /* Grid de mapas */
+        .maps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+            gap: 2.2rem;
+            max-width: 1600px;
+            width: 100%;
+            justify-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .map-card {
+            background: rgba(28, 18, 12, 0.95);
+            backdrop-filter: blur(8px);
+            border-radius: 1.8rem;
+            padding: 1.8rem 1.5rem 1.5rem;
+            border: 2px solid var(--copper);
+            border-top: 3px solid var(--gold);
+            border-bottom: 3px solid var(--gold);
+            box-shadow:
+                0 12px 50px rgba(0, 0, 0, 0.8),
+                0 0 25px rgba(240, 192, 64, 0.1),
+                inset 0 0 40px rgba(196, 122, 58, 0.05);
+            width: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            animation: fadeInUp 0.8s ease forwards;
+            opacity: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .map-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-amber), var(--neon-blue), var(--neon-amber), transparent);
+            opacity: 0.5;
+        }
+
+        .map-card::after {
+            content: '🍹';
+            position: absolute;
+            bottom: -0.5rem;
+            right: 1rem;
+            font-size: 1.8rem;
+            opacity: 0.3;
+            transition: opacity 0.3s ease;
+        }
+
+        .map-card:nth-child(1) {
+            animation-delay: 0.05s;
+        }
+        .map-card:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+        .map-card:nth-child(3) {
+            animation-delay: 0.25s;
+        }
+        .map-card:nth-child(4) {
+            animation-delay: 0.35s;
+        }
+        .map-card:nth-child(5) {
+            animation-delay: 0.45s;
+        }
+
+        .map-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow:
+                0 25px 60px rgba(0, 0, 0, 0.9),
+                0 0 35px var(--border-glow),
+                0 0 60px rgba(240, 192, 64, 0.2);
+            border-color: var(--gold);
+        }
+
+        .map-card:hover::after {
+            opacity: 0.7;
+            animation: shakeCocktail 1s ease-in-out infinite;
+        }
+
+        .map-card .card-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--cream);
+            text-align: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-family: 'Georgia', 'Times New Roman', serif;
+        }
+
+        .map-card .card-title i {
+            color: var(--neon-amber);
+            font-size: 1.8rem;
+            text-shadow: 0 0 10px rgba(255, 179, 71, 0.5);
+        }
+
+        .map-card .mermaid-container {
+            background: rgba(18, 11, 7, 0.7);
+            border-radius: 1.2rem;
+            padding: 0.8rem 0.2rem;
+            overflow-x: auto;
+            display: flex;
+            justify-content: center;
+            border: 1px solid rgba(196, 122, 58, 0.3);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .map-card .mermaid-container svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Pie de página */
+        .footer {
+            margin-top: 3.5rem;
+            color: var(--smoke);
+            font-size: 0.95rem;
+            letter-spacing: 1.5px;
+            border-top: 2px solid var(--copper);
+            padding-top: 1.5rem;
+            text-align: center;
+            width: 100%;
+            max-width: 1200px;
+            position: relative;
+            z-index: 2;
+            background: rgba(28, 18, 12, 0.7);
+            border-radius: 1rem;
+            padding: 1.2rem 2rem;
+            box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .footer i {
+            color: var(--neon-amber);
+        }
+
+        .footer .credit {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--gold);
+            letter-spacing: 2px;
+            margin-top: 0.4rem;
+            text-transform: uppercase;
+            text-shadow: 0 0 12px rgba(240, 192, 64, 0.5);
+        }
+
+        .footer .credit i {
+            margin: 0 0.3rem;
+        }
+
+        .footer .signature {
+            font-size: 0.82rem;
+            color: #9a7a5a;
+            letter-spacing: 1px;
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Estilos para Mermaid */
+        .mermaid svg {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
+        }
+
+        .mermaid .node rect,
+        .mermaid .node circle,
+        .mermaid .node ellipse,
+        .mermaid .node polygon,
+        .mermaid .node path {
+            fill: var(--mahogany) !important;
+            stroke: var(--gold) !important;
+            stroke-width: 2px !important;
+            filter: drop-shadow(0 0 4px rgba(240, 192, 64, 0.3));
+            transition: filter 0.3s ease;
+        }
+
+        .mermaid .node:hover rect,
+        .mermaid .node:hover circle,
+        .mermaid .node:hover ellipse,
+        .mermaid .node:hover polygon,
+        .mermaid .node:hover path {
+            filter: drop-shadow(0 0 12px rgba(240, 192, 64, 0.7));
+        }
+
+        .mermaid .node .label {
+            color: var(--cream) !important;
+            font-weight: 500;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            font-size: 13px !important;
+            line-height: 1.3;
+        }
+
+        .mermaid .node:first-child rect,
+        .mermaid .node:first-child circle,
+        .mermaid .node:first-child ellipse,
+        .mermaid .node:first-child polygon,
+        .mermaid .node:first-child path {
+            fill: var(--leather) !important;
+            stroke: var(--neon-amber) !important;
+            stroke-width: 3px !important;
+            filter: drop-shadow(0 0 15px rgba(255, 179, 71, 0.6));
+        }
+
+        .mermaid .node:first-child .label {
+            color: var(--gold) !important;
+            font-weight: 700 !important;
+            font-size: 15px !important;
+            text-transform: uppercase;
+        }
+
+        .mermaid .edgePath .path {
+            stroke: var(--copper) !important;
+            stroke-width: 2px !important;
+            filter: drop-shadow(0 0 3px rgba(196, 122, 58, 0.4));
+        }
+
+        .mermaid .marker {
+            fill: var(--copper) !important;
+            stroke: var(--copper) !important;
+        }
+
+        .mermaid .cluster-label span {
+            color: var(--cream) !important;
+        }
+
+        .mermaid text {
+            fill: var(--smoke) !important;
+        }
+
+        .mermaid-container::-webkit-scrollbar {
+            height: 6px;
+            background: var(--dark-wood);
+        }
+        .mermaid-container::-webkit-scrollbar-thumb {
+            background: var(--copper);
+            border-radius: 3px;
+        }
+        .mermaid-container::-webkit-scrollbar-thumb:hover {
+            background: var(--gold);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .maps-grid {
+                grid-template-columns: 1fr;
+                gap: 1.8rem;
+            }
+            .header h1 {
+                font-size: 1.8rem;
+                letter-spacing: 3px;
+            }
+            .map-card .card-title {
+                font-size: 1.2rem;
+                letter-spacing: 1px;
+            }
+            .header::before,
+            .header::after {
+                font-size: 1.5rem;
+                top: -0.8rem;
+            }
+            .fuente-titulo {
+                font-size: 2.5rem !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+         PANTALLA DE CRÉDITO (PAPIROMESA) - OVERLAY ANIMADO
+         ============================================================ -->
+    <div id="credit-overlay">
+        <!-- Figuras humanas de origami en fondo -->
+        <div class="absolute inset-0 flex items-center justify-center z-0 opacity-[0.15] pointer-events-none scale-125 md:scale-150 elemento-credito" style="--rotacion-inicial: 0deg; animation-delay: 0.8s;">
+            <svg width="400" height="300" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <g id="hombre-origami">
+                        <polygon points="50,10 65,30 50,50 35,30" fill="#f0f0f0" stroke="#cccccc" stroke-width="1.5"/>
+                        <polygon points="50,50 85,80 50,110" fill="#e0e0e0" stroke="#cccccc" stroke-width="1.5"/>
+                        <polygon points="50,50 15,80 50,110" fill="#f8f8f8" stroke="#cccccc" stroke-width="1.5"/>
+                        <polygon points="50,110 30,170 50,140" fill="#d0d0d0" stroke="#cccccc" stroke-width="1.5"/>
+                        <polygon points="50,110 70,170 50,140" fill="#e8e8e8" stroke="#cccccc" stroke-width="1.5"/>
+                        <polygon points="25,70 0,110 20,100" fill="#eaeaea" stroke="#cccccc" stroke-width="1.5"/>
+                        <polygon points="75,70 100,110 80,100" fill="#dcdcdc" stroke="#cccccc" stroke-width="1.5"/>
+                    </g>
+                </defs>
+                <use href="#hombre-origami" x="0" y="0" transform="translate(20, 10) rotate(-10 50 100)" />
+                <use href="#hombre-origami" x="100" y="0" transform="translate(0, -10)" />
+                <use href="#hombre-origami" x="200" y="0" transform="translate(-20, 10) rotate(10 50 100)" />
+            </svg>
+        </div>
+
+        <!-- Texto central -->
+        <div class="relative z-50 text-center select-none pointer-events-none">
+            <h1 class="fuente-titulo text-5xl md:text-7xl font-bold mb-2">PAPIROMESA</h1>
+            <p class="fuente-subtitulo text-lg md:text-2xl font-semibold tracking-wide">Estudio de Desarrollo</p>
+        </div>
+
+        <!-- SVG de estrella de origami para reutilizar -->
+        <svg style="display: none;">
+            <defs>
+                <g id="estrella-origami">
+                    <polygon points="50,50 50,0 35,35" fill="#ffffff" stroke="#d4d4d4" stroke-width="0.75" />
+                    <polygon points="50,50 50,0 65,35" fill="#f0f0f0" stroke="#d4d4d4" stroke-width="0.75" />
+                    <polygon points="50,50 100,50 65,35" fill="#ffffff" stroke="#d4d4d4" stroke-width="0.75" />
+                    <polygon points="50,50 100,50 65,65" fill="#e0e0e0" stroke="#d4d4d4" stroke-width="0.75" />
+                    <polygon points="50,50 50,100 65,65" fill="#f0f0f0" stroke="#d4d4d4" stroke-width="0.75" />
+                    <polygon points="50,50 50,100 35,65" fill="#d0d0d0" stroke="#d4d4d4" stroke-width="0.75" />
+                    <polygon points="50,50 0,50 35,65" fill="#e0e0e0" stroke="#d4d4d4" stroke-width="0.75" />
+                    <polygon points="50,50 0,50 35,35" fill="#ffffff" stroke="#d4d4d4" stroke-width="0.75" />
+                </g>
+            </defs>
+        </svg>
+
+        <!-- Grupo de estrellas - esquina superior izquierda -->
+        <div class="absolute top-10 left-10 md:top-20 md:left-24 w-40 h-40 z-20 pointer-events-none">
+            <svg class="absolute w-16 h-16 md:w-20 md:h-20 sombra-origami animacion-flotar elemento-credito" style="top: 0; left: 0; --rotacion-inicial: -15deg; animation-delay: 1.2s;" viewBox="0 0 100 100">
+                <use href="#estrella-origami" />
+            </svg>
+            <svg class="absolute w-12 h-12 md:w-16 md:h-16 sombra-origami animacion-flotar elemento-credito" style="top: 50%; left: 40%; --rotacion-inicial: 25deg; animation-delay: 1.5s;" viewBox="0 0 100 100">
+                <use href="#estrella-origami" />
+            </svg>
+            <svg class="absolute w-14 h-14 md:w-18 md:h-18 sombra-origami animacion-flotar elemento-credito" style="top: -10%; left: 60%; --rotacion-inicial: 45deg; animation-delay: 1.8s;" viewBox="0 0 100 100">
+                <use href="#estrella-origami" />
+            </svg>
+        </div>
+
+        <!-- Grupo de estrellas - esquina inferior derecha -->
+        <div class="absolute bottom-10 right-10 md:bottom-20 md:right-24 w-40 h-40 z-20 pointer-events-none">
+            <svg class="absolute w-16 h-16 md:w-24 md:h-24 sombra-origami animacion-flotar elemento-credito" style="bottom: 0; right: 0; --rotacion-inicial: 10deg; animation-delay: 1.4s;" viewBox="0 0 100 100">
+                <use href="#estrella-origami" />
+            </svg>
+            <svg class="absolute w-12 h-12 md:w-16 md:h-16 sombra-origami animacion-flotar elemento-credito" style="bottom: 40%; right: 50%; --rotacion-inicial: -30deg; animation-delay: 1.7s;" viewBox="0 0 100 100">
+                <use href="#estrella-origami" />
+            </svg>
+            <svg class="absolute w-10 h-10 md:w-14 md:h-14 sombra-origami animacion-flotar elemento-credito" style="bottom: 10%; right: 70%; --rotacion-inicial: 70deg; animation-delay: 2.0s;" viewBox="0 0 100 100">
+                <use href="#estrella-origami" />
+            </svg>
+        </div>
+
+        <!-- Estrella neón roja - parte superior derecha -->
+        <div class="absolute right-8 md:right-32 top-[20%] md:top-[25%] z-20 pointer-events-none elemento-credito" style="--rotacion-inicial: 15deg; animation-delay: 2.2s;">
+            <svg class="w-16 h-16 md:w-20 md:h-20 brillo-neon-rojo animacion-flotar" style="--rotacion-inicial: 15deg;" viewBox="0 0 100 100">
+                <g stroke="#ff3366" stroke-width="2.5" fill="rgba(255, 255, 255, 0.8)">
+                    <polygon points="50,50 50,0 35,35" />
+                    <polygon points="50,50 50,0 65,35" />
+                    <polygon points="50,50 100,50 65,35" />
+                    <polygon points="50,50 100,50 65,65" />
+                    <polygon points="50,50 50,100 65,65" />
+                    <polygon points="50,50 50,100 35,65" />
+                    <polygon points="50,50 0,50 35,65" />
+                    <polygon points="50,50 0,50 35,35" />
+                </g>
+            </svg>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         CONTENIDO PRINCIPAL: MAPAS MENTALES DE BARTENDERÍA
+         ============================================================ -->
+    <div id="main-wrapper">
+        <!-- Encabezado -->
+        <header class="header">
+            <h1>
+                <i class="fas fa-cocktail"></i>
+                Mapas Mentales
+                <i class="fas fa-martini-glass-citrus"></i>
+            </h1>
+            <div class="subtitle">
+                <i class="fas fa-hotel"></i>
+                Introducción al Bar &bull; Módulo 1.5
+                <i class="fas fa-beer-mug-empty"></i>
+            </div>
+            <div class="docente">
+                <i class="fas fa-chalkboard-teacher"></i> Docente: Saúl Rivas &nbsp;|&nbsp;
+                <i class="fas fa-bottle-droplet"></i> Bartendería
+            </div>
+        </header>
+
+        <!-- Grid de mapas -->
+        <div class="maps-grid">
+
+            <!-- 1. Antecedentes del Bar -->
+            <div class="map-card">
+                <div class="card-title">
+                    <i class="fas fa-history"></i> 1. Antecedentes del Bar
+                </div>
+                <div class="mermaid-container">
+                    <div class="mermaid">
+mindmap
+  root((Antecedentes\ndel Bar))
+    Antigua Grecia y Roma
+      Tabernas
+        Alojamiento, comida y bebida
+    Edad Media
+      Tabernas y posadas
+        Beber y juegos de mesa
+    Siglo XVIII Inglaterra
+      Pubs (public houses)
+        Reuniones, política y socialización
+    Siglo XIX
+      Bodegas
+        Almacenar y vender vinos y licores
+    Década 1920 EE.UU.
+      Speakeasies (clandestinos)
+        Alcohol ilegal, socialización secreta
+    Actualidad
+      Bares, pubs, cafeterías...
+        Música, deportes, socialización
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Definición de Bar -->
+            <div class="map-card">
+                <div class="card-title">
+                    <i class="fas fa-info-circle"></i> 2. Definición de Bar
+                </div>
+                <div class="mermaid-container">
+                    <div class="mermaid">
+mindmap
+  root((Definición\nde Bar))
+    Origen
+      Inglés "barra" (bar)
+    Características
+      Barra alta y mostrador
+      Bancos altos para apoyarse
+      Venta de bebidas alcohólicas y no alcohólicas
+      Bocadillos y aperitivos
+    Nombres en otros países
+      Grecia: Tabernas
+      EE.UU.: Bar / Saloon
+      España: Tasca
+      Francia: Bistró
+      Inglaterra: Pub
+      Irlanda: Bufette
+      México: Cantina
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Definición Barman -->
+            <div class="map-card">
+                <div class="card-title">
+                    <i class="fas fa-user-tie"></i> 3. Definición Barman
+                </div>
+                <div class="mermaid-container">
+                    <div class="mermaid">
+mindmap
+  root((Barman\nBartender))
+    Significado
+      "Hombre de la barra" (inglés)
+    Perfil profesional
+      Atiende clientes en barra
+      Conoce ingredientes y preparación
+      Combina y sirve bebidas alcohólicas
+      Registra consumo
+      Organiza y limpia la barra
+      Controla inventario y reposición
+    Ámbitos
+      Bares, cervecerías, tabernas, cantinas, restaurantes
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Funciones del Bartender -->
+            <div class="map-card">
+                <div class="card-title">
+                    <i class="fas fa-tasks"></i> 4. Funciones del Bartender
+                </div>
+                <div class="mermaid-container">
+                    <div class="mermaid">
+mindmap
+  root((Funciones\ndel Bartender))
+    Organización
+      Organizar el bar
+    Limpieza
+      Cuidar la limpieza general
+    Preparación
+      Preparar y servir bebidas (alcohólicas y no)
+    Supervisión
+      Supervisar ayudantes, aprendices y meseros
+    Atención
+      Atender y servir a los clientes
+    Control
+      Controlar inventario (cristalería, utensilios, materia prima)
+      Realizar solicitudes de compra
+    Cobros
+      Realizar cobros (manejo de caja)
+    Mantenimiento
+      Dar aviso sobre mantenimiento de equipos
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Competencias y Valores de un Barman -->
+            <div class="map-card">
+                <div class="card-title">
+                    <i class="fas fa-star"></i> 5. Competencias y Valores
+                </div>
+                <div class="mermaid-container">
+                    <div class="mermaid">
+mindmap
+  root((Competencias\ny Valores))
+    Formación
+      Mixología sólida
+    Experiencia
+      Servicio al cliente profesional y amable
+    Conocimiento
+      Vinos, cervezas, licores, cócteles
+    Habilidades
+      Preparación rápida y precisa
+    Seguridad
+      Normas de seguridad e higiene
+    Trabajo en equipo
+      Colaboración con el personal
+    Flexibilidad
+      Adaptación a cambios del entorno
+    Creatividad
+      Crear cócteles únicos y atractivos
+    Responsabilidad
+      Manejo de dinero y productos, cumplir normativas
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Pie de página -->
+        <footer class="footer">
+            <div>
+                <i class="fas fa-crown"></i>
+                Instituto Nacional General Francisco Menéndez &bull; Módulo 1.5
+                <i class="fas fa-crown"></i>
+            </div>
+            <div class="credit">
+                <i class="fas fa-martini-glass"></i>
+                Hecho por ANGEL ENRIQUE CAÑEGUEZ MARTINEZ
+                <i class="fas fa-martini-glass"></i>
+            </div>
+            <div class="signature">
+                <i class="fas fa-code"></i> Diseño con temática de bartendería &bull; Mixología &amp; Coctelería
+            </div>
+        </footer>
+    </div>
+
+    <!-- ============================================================
+         SCRIPTS
+         ============================================================ -->
+    <script>
+        // ========== CONFIGURACIÓN DE MERMAID ==========
+        mermaid.initialize({
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#d4a037',
+                primaryTextColor: '#f5e6c8',
+                primaryBorderColor: '#c47a3a',
+                lineColor: '#c9a87c',
+                secondaryColor: '#3a2215',
+                tertiaryColor: '#2c1810',
+                background: '#1a0f0a',
+                fontFamily: '"Segoe UI", Roboto, sans-serif',
+                fontSize: '14px',
+            },
+            mindmap: {
+                useMaxWidth: true,
+                padding: 8,
+                htmlLabels: true,
+            }
+        });
+
+        // Renderizar Mermaid después de cargar el DOM
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                mermaid.run({
+                    nodes: document.querySelectorAll('.mermaid'),
+                }).catch(err => {
+                    console.warn('Error en Mermaid:', err);
+                });
+            }, 200);
+        });
+
+        // ========== CONTROL DE LA PANTALLA DE CRÉDITO ==========
+        (function() {
+            const overlay = document.getElementById('credit-overlay');
+            const mainWrapper = document.getElementById('main-wrapper');
+
+            // Tiempo de visualización del crédito (ms)
+            const TIEMPO_CREDITO = 4500; // 4.5 segundos
+
+            // Función para ocultar la pantalla de crédito
+            function cerrarCredito() {
+                if (overlay && !overlay.classList.contains('hidden-overlay')) {
+                    overlay.classList.add('hidden-overlay');
+                    // Habilitar scroll del body
+                    document.body.style.overflow = 'auto';
+                }
+                if (mainWrapper) {
+                    mainWrapper.classList.add('content-visible');
+                }
+            }
+
+            // Bloquear scroll mientras se muestra el crédito
+            document.body.style.overflow = 'hidden';
+
+            // Si el usuario hace clic en cualquier parte del overlay, lo cerramos antes
+            overlay.addEventListener('click', function() {
+                cerrarCredito();
+            });
+
+            // También permitir cerrar con tecla Escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    cerrarCredito();
+                }
+            });
+
+            // Cierre automático después del tiempo establecido
+            setTimeout(cerrarCredito, TIEMPO_CREDITO);
+
+            // Prevenir que el overlay capture clics cuando ya está oculto
+            // (ya se maneja con pointer-events: none en la clase hidden-overlay)
+        })();
+
+        // ========== PEQUEÑO AJUSTE PARA QUE LAS ANIMACIONES DE ENTRADA FUNCIONEN ==========
+        // Aseguramos que las animaciones de Papiromesa se ejecuten al cargar
+        window.addEventListener('load', function() {
+            const overlay = document.getElementById('credit-overlay');
+            if (overlay) {
+                // Forzar un reflow para que las animaciones CSS se reinicien correctamente
+                void overlay.offsetHeight;
+            }
+        });
+    </script>
+</body>
+</html>
